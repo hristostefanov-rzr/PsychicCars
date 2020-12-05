@@ -10,19 +10,19 @@ window.onload = function() {
 class Tile{
     constructor(starting_line){
         this.width = starting_line.width
-        //this.is_straight = Math.random() > 0.8;
-        this.is_straight = false;
+        this.is_straight = Math.random() > 0.6;
+        //this.is_straight = false;
         if(this.is_straight){
-            this.length = 150;
-            this.turn_points = Generate_Straight(length, starting_line, starting_line.orientation, 1000);
+            this.length = Math.random() * 20 + 30;
+            this.turn_points = Generate_Straight(this.length, starting_line, starting_line.orientation, 100);
             this.next_orientation = starting_line.orientation;
-            new Connection(this.turn_points[0][this.turn_points[0].length-1], this.turn_points[1][this.turn_points[1].length-1], this.next_orientation);
+            this.end_line = new Connection(this.turn_points[0][this.turn_points[0].length-1], this.turn_points[1][this.turn_points[1].length-1], this.next_orientation);
         }else{
             this.is_left_turn = Math.random() > 0.5;
-            this.degrees = Math.random() * 40+ 10;
+            this.degrees = Math.random() * 60+ 10;
             //this.degress = 10;
             this.staring_line = starting_line;
-            this.radius = Math.random() * 180
+            this.radius = Math.random() * 120
             //this.radius = 200
             this.turn_points = Generate_turn(this.is_left_turn, this.radius, 1000, starting_line, this.degrees, starting_line.orientation)
             this.next_orientation = update_orientation(this.is_left_turn, starting_line.orientation, this.degrees);
@@ -95,7 +95,7 @@ function draw_points_on_line(steps, starting_point, ending_point){
     var delta_x = ending_point.x - starting_point.x;
     var delta_y = ending_point.y - starting_point.y;
     var points = [];
-    for(i=0;i<steps;i++){
+    for(var i=0;i<steps;i++){
         var partial_x = starting_point.x + delta_x * i/steps;
         var partial_y = starting_point.y + delta_y * i/steps;
         points.push(new Point(partial_x, partial_y));
@@ -107,7 +107,7 @@ function migrate_points(point1, point2, points){
     var delta_x = point2.x - point1.x;
     var delta_y = point2.y - point1.y;
     var migrated_points = [];
-    for(i =0;i<points.length;i++){
+    for(var i =0;i<points.length;i++){
         var migrated_point = new Point(points[i].x + delta_x, points[i].y + delta_y);
         migrated_points.push(migrated_point);
     }
@@ -301,9 +301,11 @@ var orientation = 0;
 var starting_line = new Connection(new Point(475, 500), new Point(525,500), 0);
 var tiles = []
 var current_line = starting_line;
-for(i = 0;i<20;i++){
-    var new_tile = new Tile(current_line)
+for(var i = 0;i < 50;i++){
+    var new_tile = new Tile(current_line);
     tiles.push(new_tile);
+    console.log(new_tile);
+    console.log(i);
     current_line = new_tile.end_line; 
 }
 function start(){
@@ -314,7 +316,7 @@ function update() {
     c.fillStyle = "#7ec850";
     c.fillRect(0, 0, 1000, 1000);
     //turn
-    for(i = 0;i < tiles.length;i++){
+    for(var i = 0;i < tiles.length;i++){
         tiles[i].show();
     }
 }
