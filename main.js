@@ -48,7 +48,6 @@ function update(){
     var initial_vector = new Vector(circleAngle, 4);
     var adjustment = wanted_vector.add(new Vector(initial_vector.angle*180/Math.PI, -initial_vector.size))
     initial_vector = initial_vector.add(adjustment)
-    console.log(adjustment.size + "banana")
     circleAngle += 15
 }
 
