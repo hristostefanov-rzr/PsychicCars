@@ -56,9 +56,8 @@ class Vector{
             this.size = size;
             this.angle = degrees_to_radians(angle); // The angle should be in range 0, 360
         }
-        if(this.size < 0.00003){
+        if(this.size < 1e-7){
             this.direction = new Point(0, 0);
-            console.log("Close to the origin")
         }
         else{
             this.direction = new Point(Math.cos(this.angle), Math.sin(this.angle)); // The direction should always be a point from the unit circle (cos(alpha), sin(alpha))
