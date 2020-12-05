@@ -10,18 +10,25 @@ window.onload = function() {
 class Tile{
     constructor(starting_line){
         this.width = starting_line.width
-        this.is_left_turn = Math.random() > 0.5;
-        //this.is_left_turn =true;
-        this.degrees = Math.random() * 90;
-        //this.degrees = 30;
-        this.staring_line = starting_line;
-        //radius of the circle it basically determines how long the tile is
-        //this.radius = 50;
-        this.radius = Math.random() * 90
-        //this.outer_radius = this.radius + this.width;
-        this.turn_points = Generate_turn(this.is_left_turn, this.radius, 1000, starting_line, this.degrees, starting_line.orientation)
-        this.next_orientation = update_orientation(this.is_left_turn, starting_line.orientation, this.degrees);
-        this.end_line = new Connection(this.turn_points[0][this.turn_points[0].length-1], this.turn_points[1][this.turn_points[1].length-1], this.next_orientation);
+        //this.is_straight = Math.random() > 0.8;
+        this.is_straight = false;
+        if(this.is_straight){
+            this.length = 150;
+            this.turn_points = Generate_Straight(length, starting_line, starting_line.orientation, 1000);
+            this.next_orientation = starting_line.orientation;
+            new Connection(this.turn_points[0][this.turn_points[0].length-1], this.turn_points[1][this.turn_points[1].length-1], this.next_orientation);
+        }else{
+            this.is_left_turn = Math.random() > 0.5;
+            this.degrees = Math.random() * 40+ 10;
+            //this.degress = 10;
+            this.staring_line = starting_line;
+            this.radius = Math.random() * 180
+            //this.radius = 200
+            this.turn_points = Generate_turn(this.is_left_turn, this.radius, 1000, starting_line, this.degrees, starting_line.orientation)
+            this.next_orientation = update_orientation(this.is_left_turn, starting_line.orientation, this.degrees);
+            this.end_line = new Connection(this.turn_points[0][this.turn_points[0].length-1], this.turn_points[1][this.turn_points[1].length-1], this.next_orientation);
+        }
+        
     }
     show(color = 'black'){
 
@@ -53,6 +60,58 @@ class Connection{
         this.orientation = orientation;
         this.width = ((point1.x - point2.x) ** 2 + (point1.y - point2.y)**2)**(1/2);
     }
+}
+function Generate_Straight(length, starting_line, orientation, steps){
+    var starting_point = starting_line.point1;
+    var radian_orientation = Math.PI * (orientation/180)
+    if(orientation >=0 && orientation< 90){   
+        var ending_x = starting_point.x - Math.sin(radian_orientation) * length;
+        var ending_y = starting_point.y + Math.cos(radian_orientation) * length;
+        var ending_point = new Point(ending_x, ending_y);
+        var points = draw_points_on_line(steps, starting_point, ending_point);
+        var migrated_points = migrate_points(starting_line.point1, starting_line.point2, points);
+    }else if(orientation >= 90 && orientation < 180){
+        var ending_x = starting_point.x - Math.sin(Math.PI - radian_orientation) * length;
+        var ending_y = starting_point.y - Math.cos(Math.PI - radian_orientation) * length;
+        var ending_point = new Point(ending_x, ending_y);
+        var points = draw_points_on_line(steps, starting_point, ending_point);
+        var migrated_points = migrate_points(starting_line.point1, starting_line.point2, points); 
+    }else if(orientation >= 180 && orientation < 270){
+        var ending_x = starting_point.x + Math.cos(3 * Math.PI/2 - radian_orientation) * length;
+        var ending_y = starting_point.y - Math.sin(3 * Math.PI/2 - radian_orientation) * length;
+        var ending_point = new Point(ending_x, ending_y);
+        var points = draw_points_on_line(steps, starting_point, ending_point);
+        var migrated_points = migrate_points(starting_line.point1, starting_line.point2, points);
+    }else if(orientation >= 270 && orientation < 360){
+        var ending_x = starting_point.x + Math.sin(2 * Math.PI - radian_orientation) * length;
+        var ending_y = starting_point.y + Math.cos(2 * Math.PI - radian_orientation) * length;
+        var ending_point = new Point(ending_x, ending_y);
+        var points = draw_points_on_line(steps, starting_point, ending_point);
+        var migrated_points = migrate_points(starting_line.point1, starting_line.point2, points);
+    }
+    return [points, migrated_points]
+}
+function draw_points_on_line(steps, starting_point, ending_point){
+    var delta_x = ending_point.x - starting_point.x;
+    var delta_y = ending_point.y - starting_point.y;
+    var points = [];
+    for(i=0;i<steps;i++){
+        var partial_x = starting_point.x + delta_x * i/steps;
+        var partial_y = starting_point.y + delta_y * i/steps;
+        points.push(new Point(partial_x, partial_y));
+    }
+    return points
+}
+function migrate_points(point1, point2, points){
+//change points that start from point1 to start from point2
+    var delta_x = point2.x - point1.x;
+    var delta_y = point2.y - point1.y;
+    var migrated_points = [];
+    for(i =0;i<points.length;i++){
+        var migrated_point = new Point(points[i].x + delta_x, points[i].y + delta_y);
+        migrated_points.push(migrated_point);
+    }
+    return migrated_points
 }
 function update_orientation(is_left_turn, orientation, degrees){
     var new_orientation = orientation;
@@ -125,7 +184,6 @@ function Turn_to_coordinates(is_left, radius, steps, degree_turn, orientation, s
 }
 function Generate_left_turn(radius, steps, starting_line, degree_turn, orientation){
     var start_of_range = steps *(360 - orientation)/360;
-    console.log(start_of_range);
     var end_of_range = steps * ((360 - orientation) + degree_turn)/360;
     var width = starting_line.width;
     var point_duos = get_left_duos(starting_line, orientation);
@@ -228,7 +286,6 @@ function get_right_duos(starting_line, orientation){
         var outer_point = right_point;
     
     }else if(orientation >90 && orientation <180){
-        console.log(orientation);
         var inner_point = right_point;
         var outer_point = left_point;
     }else if(orientation >= 180 && orientation < 270){
@@ -254,7 +311,7 @@ function start(){
 }
 function update() {
     //background
-    c.fillStyle = 'lightblue';
+    c.fillStyle = "#7ec850";
     c.fillRect(0, 0, 1000, 1000);
     //turn
     for(i = 0;i < tiles.length;i++){
