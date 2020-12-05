@@ -1,19 +1,13 @@
 import {Point, Vector} from "./utils.js";
 
-// const keyCodes = [LEFT, UP, RIGHT, DOWN] = [37, 38, 39, 40]
-
-// Canvas
-const canvas = document.getElementById("canv");
-const c = canvas.getContext("2d");
-
 class Car{
     constructor(x, y){
         this.length = 60;
         this.width = 30;
         this.position = new Point(x, y);
-        this.speed = new Vector(0, 0);
+        this.speed = new Vector(30, 2);
         this.image = new Image();
-        this.image.src = "./images/face.png";
+
         this.ready = false;
     }
     update(speed_adjustment){
@@ -26,25 +20,4 @@ class Car{
     }
 }
 
-var car = new Car(0, 0);
-car.image.onload = () => car.ready = true
-
-var counter = 0;
-function update(){
-    c.fillStyle = 'lightblue';
-    c.fillRect(0, 0, 600, 800);
-    car.show();
-    var adj = new Vector(2*counter**1.4, 0.3)
-    counter += 1;
-    car.update(adj);
-    console.log(car.position.x + " " + car.position.y)
-}
-
-function main(){
-    if (!car.ready) return
-    update()
-}
-
-window.onload = function() {
-    setInterval(main, 10);
-}
+export {Car};
