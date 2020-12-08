@@ -32,10 +32,10 @@ class Tile{
     }
     show(color = 'black'){
 
-        for(var i = 0;i<this.turn_points[0].length;i++){
+        for(var i = 0;i < this.turn_points[0].length;i++){
             this.turn_points[0][i].show(color)
         }
-        for(var i = 0;i<this.turn_points[1].length;i++){
+        for(var i = 0;i < this.turn_points[1].length;i++){
             this.turn_points[1][i].show(color)
         }
     }
@@ -95,7 +95,7 @@ function draw_points_on_line(steps, starting_point, ending_point){
     var delta_x = ending_point.x - starting_point.x;
     var delta_y = ending_point.y - starting_point.y;
     var points = [];
-    for(var i=0;i<steps;i++){
+    for(var i=0; i < steps ;i++){
         var partial_x = starting_point.x + delta_x * i/steps;
         var partial_y = starting_point.y + delta_y * i/steps;
         points.push(new Point(partial_x, partial_y));
@@ -312,10 +312,10 @@ function start(){
     
 }
 function update() {
-    //background
+
     c.fillStyle = "#7ec850";
-    c.fillRect(0, 0, 1000, 1000);
-    //turn
+    c.fillRect(0, 0, 5000, 5000);
+
     for(var i = 0;i < tiles.length;i++){
         tiles[i].show();
     }
