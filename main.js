@@ -1,50 +1,79 @@
 import {Car} from "./car.js"
-import {Vector, Point} from "./utils.js"
+import {Point, Vector} from "./utils.js"
 
 // Canvas
 const canvas = document.getElementById("canv");
 const c = canvas.getContext("2d");
 
-var car = new Car(0, 0);
+var car = new Car(300, 300);
 car.image.onload = () => car.ready = true
-car.image.src = "./images/face.png";
+car.image.src = "./images/car.png";
 
-// function addEventListeners() {
+var down_now = {
+    down:0,
+    up:0,
+    right:0,
+    left:0
+}
 
-// 	//Listening event to the pressed key
-// 	addEventListener("keydown", (e) => {
-// 		if (!keyCodes.find(key => e.keyCode === key)) return
-// 		if (firstMove) {
-// 			firstMove = false
-// 			setTimer()
-// 		}
+// Setup event listeners
+function setupEvents() {
 
-//         keyActions[e.keyCode] = true
-//         keyTimers[e.]
-// 	}, true)
+    document.addEventListener('keyup', function(event){
+        var keyName = event.key;
 
-// 	//Listening event when the key is released
-// 	addEventListener("keyup", (e) => {
-// 		delete keyActions[e.keyCode]
-// 	}, true)
-// }
+        switch(keyName) {
+        case "ArrowRight":
+            down_now.right = 0;
+            break;
+        case "ArrowLeft":
+            down_now.left = 0;
+            break;
+        case "ArrowUp":
+            down_now.up = 0;
+            break;
+        case "ArrowDown":
+            down_now.down = 0;
+            break;
+        default:
+            break;
+        }
+    });
+
+    document.addEventListener('keydown', function(event){
+        var keyName = event.key;
+
+        switch(keyName) {
+        case "ArrowRight":
+            down_now.right = 1;
+            break;
+        case "ArrowLeft":
+            down_now.left = 1;
+            break;
+        case "ArrowUp":
+            down_now.up = 1;
+            break;
+        case "ArrowDown":
+            down_now.down = 1;
+            break;
+        default:
+            break;
+        }
+    });
+}
 
 function main(){
     if (!car.ready) return
+    setupEvents()
     update()
 }
-
-
-var circleAngle = 0;
 function update(){
+    var speed_adjustment = new Vector(new Point(down_now.right/10-down_now.left/10, down_now.down/10-down_now.up/10))
     c.fillStyle = 'lightblue';
-    c.fillRect(0, 0, 600, 800);
+    c.fillRect(0, 0, 600, 600);
     car.show();
-    if(circleAngle === 2)return
-    car.update(new Vector(0, 0));
-    circleAngle += 1;
+    car.update(speed_adjustment);
 }
-
 window.onload = function() {
     setInterval(main, 10);
 }

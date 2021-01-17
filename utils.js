@@ -70,6 +70,12 @@ class Vector{
         var output = new Vector(components)
         return output;
     }
+
+    multiply(scalar){
+        var components = new Point(this.components.x * scalar, this.components.y * scalar);
+        var output = new Vector(components)
+        return output
+    }
 }
 
 function degrees_to_radians(degrees)
